@@ -141,3 +141,30 @@ class LogoutSerializer(serializers.Serializer):
             )
 
         return {}
+
+
+class RefreshTokenSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField(max_length=255, write_only=True)
+    jwt = serializers.CharField(max_length=255, read_only=True)
+    
+    def validate(self, data):
+        refresh_token = data.get('refresh_token', None)
+
+        if refresh_token is None:
+            raise serializers.ValidationError(
+                'A Refresh Token is required in this Request'
+            )
+
+        # get user by the refresh token
+        try:
+            user = User.objects.get(refresh_token=refresh_token)
+            user.save()
+        except:
+            raise serializers.ValidationError(
+                'The Entered Refresh Token is Incorrect'
+            )
+
+        return {
+            'jwt': user.jwt
+        }
+
