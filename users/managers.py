@@ -7,8 +7,11 @@ class UserManager(BaseUserManager):
         """
         Creates and saves a User with the given email and password.
         """
+        print(extra_fields)
         if not email:
             raise ValueError('The given email must be set')
+        if not extra_fields['name']:
+            raise ValueError("Name can't be empty")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
