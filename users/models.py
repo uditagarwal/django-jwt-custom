@@ -75,7 +75,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         token = jwt.encode({
             'id': self.pk,
-            'exp': int(dt.strftime('%s'))
+            'exp': int(dt.strftime('%s')),
+            'refresh': self.refresh_token
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token.decode('utf-8')
@@ -88,4 +89,5 @@ class User(AbstractBaseUser, PermissionsMixin):
         
         """
         self.avatar = self._generate_gravatar_url()
+        self.refresh_token = self._generate_refresh_token()
         super(User, self).save(*args, **kwargs)

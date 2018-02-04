@@ -47,12 +47,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         if errors:
             raise serializers.ValidationError(errors)
+        return password
 
     def create(self, validated_data):
         # Use the `create_user` method we wrote earlier to create a new user.
         user = User.objects.create_user(**validated_data)
-        user.refresh_token = user._generate_refresh_token()
-        user.save()
         return user
 
 
@@ -102,12 +101,6 @@ class LoginSerializer(serializers.Serializer):
                 'This user has been deactivated.'
             )
 
-        # Calling save on the model because it generates a new refresh token
-        # throws an error if the user is already logged in
-        if not user.refresh_token:
-            user.refresh_token = user._generate_refresh_token()
-            user.save()
-
         # The `validate` method should return a dictionary of validated data.
         # This is the data that is passed to the `create` and `update` methods
         # that we will see later on.
@@ -136,10 +129,12 @@ class LogoutSerializer(serializers.Serializer):
                 'A Refresh Token is required in this Request'
             )
 
-        # get user by the refresh token
+        # get user by the refresh token and save him again so
+        # the refresh token gets regenerated, that way
+        # all the prior Auth Tokens arent valid until
+        # the user logs back in again
         try:
             user = User.objects.get(refresh_token=refresh_token)
-            user.refresh_token = None
             user.save()
         except:
             raise serializers.ValidationError(
