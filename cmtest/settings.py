@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'users',
     'rest_framework',
+    'ideas'
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        'NAME': 'cmtest.validators.CustomPasswordValidator',
+    },
 ]
 
 
@@ -134,4 +138,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'users.backends.JWTAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+
 }
+
+APPEND_SLASH=False

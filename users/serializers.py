@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import User
 from django.contrib.auth import authenticate
-
+import django.contrib.auth.password_validation as validators
+from django.core import exceptions
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -33,9 +34,27 @@ class RegistrationSerializer(serializers.ModelSerializer):
         # or response, including fields specified explicitly above.
         fields = ['email', 'password', 'name', 'jwt', 'refresh_token']
 
+    def validate_password(self, password):
+        # here data has all the fields which have validated values
+        # so we can create a User instance out of it
+        errors = dict() 
+        try:
+            # validate the password and catch the exception
+            validators.validate_password(password=password)
+
+        # the exception raised here is different than serializers.ValidationError
+        except exceptions.ValidationError as e:
+            errors['password'] = list(e.messages)
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
     def create(self, validated_data):
         # Use the `create_user` method we wrote earlier to create a new user.
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        user.refresh_token = user._generate_refresh_token()
+        user.save()
+        return user
 
 
 class LoginSerializer(serializers.Serializer):

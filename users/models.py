@@ -49,13 +49,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def _generate_gravatar_url(self):
         """
         Generates the Gravatar for the URL of the user
-       
+
         """
         size = 40
         default = "https://example.com/static/images/defaultavatar.jpg"
         return "https://www.gravatar.com/avatar/%s?%s" % (
             hashlib.md5(self.email.encode('utf-8').lower()).hexdigest(),
-            urllib.parse.urlencode({'d':default, 's':str(size)})
+            'identicon'
         )
 
     def _generate_refresh_token(self):
