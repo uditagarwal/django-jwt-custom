@@ -19,7 +19,7 @@ class IdeasList(generics.ListCreateAPIView):
 
 
     def list(self, request, *args, **kwargs):
-        response = super(SnippetList, self).list(request, args, kwargs)
+        response = super(IdeasList, self).list(request, args, kwargs)
         # doing this because the test expects it as a list of results 
         # without the extra information
         response.data = response.data['results']
