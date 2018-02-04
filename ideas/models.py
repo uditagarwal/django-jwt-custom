@@ -12,6 +12,9 @@ class Ideas(models.Model):
     # Add a foreign Key to the User to attach users to their ideas
     user = models.ForeignKey(User, related_name='ideas')
 
+    def __str__(self):
+        return self.content
+
     @property
     def average_score(self):
         return round((self.impact + self.ease + self.confidence)/3, 2)
