@@ -30,7 +30,8 @@ class IdeasDetail(generics.RetrieveUpdateDestroyAPIView):
     '''
     GET, PUT and DELETE view for Ideas
     '''
-    queryset = Ideas.objects.all()
     serializer_class = IdeasSerializer
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self, *args, **kwargs):
+        return Ideas.objects.all().filter(user=self.request.user)
