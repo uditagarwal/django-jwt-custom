@@ -1,7 +1,5 @@
-Django Backend Project for CodementorX Test Assignment
+Django+DRF Project using custom JWT Authentication
 -----------------------------------------------------
-
-Based on https://small-project-api.herokuapp.com/api-docs
 
 To Install ---
 pip install requirements.txt
